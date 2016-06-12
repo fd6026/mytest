@@ -267,7 +267,7 @@ then
 			tone_alarm $TUNE_ERR
 		fi
 	fi
-
+	#set IO_PRESENT yes
 	#
 	# Set default output if not set
 	#
@@ -475,7 +475,7 @@ then
 			# Avoid using ttyS1 for MAVLink on FMUv4
 			if ver hwcmp PX4FMU_V4
 			then
-				set MAVLINK_F "-r 1200 -d /dev/ttyS1"
+				#set MAVLINK_F "-r 1200 -d /dev/ttyS1"
 				# Start MAVLink on Wifi (ESP8266 port)
 				mavlink start -r 20000 -m config -b 921600 -d /dev/ttyS0
 			fi
@@ -519,7 +519,9 @@ then
 		fi
 		if param compare SYS_COMPANION 1921600
 		then
-			mavlink start -d /dev/ttyS2 -b 921600 -r 20000
+			#mavlink start -d /dev/ttyS2 -b 921600 -r 20000
+			rw_uart start /dev/ttyS2
+			rw_uart_sonar start /dev/ttyS1
 		fi
 		# Sensors on the PWM interface bank
 		# clear pins 5 and 6
@@ -583,7 +585,8 @@ then
 	# sf0x lidar sensor
 	if param compare SENS_EN_SF0X 1
 	then
-		sf0x start
+		sf0x start		
+
 	fi
 
 	if ver hwcmp PX4FMU_V4
@@ -643,7 +646,7 @@ then
 	#
 	if [ $OUTPUT_MODE == ardrone ]
 	then
-		ardrone_interface start -d /dev/ttyS1
+		#ardrone_interface start -d /dev/ttyS1
 	fi
 
 	#
@@ -821,7 +824,8 @@ then
 		if ver hwcmp PX4FMU_V2
 		then
 			# On Pixfalcon use the standard telemetry port (Telem 1).
-			snapdragon_rc_pwm start -d /dev/ttyS1
+			#snapdragon_rc_pwm start -d /dev/ttyS1
+
 			px4io start
 		fi
 

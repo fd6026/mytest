@@ -78,6 +78,8 @@
 #include "position_estimator_inav_params.h"
 #include "inertial_filter.h"
 
+ #include "rw_uart/rw_uart_sonar_topic.h"
+
 #define MIN_VALID_W 0.00001f
 #define PUB_INTERVAL 10000	// limit publish rate to 100 Hz
 #define EST_BUF_SIZE 250000 / PUB_INTERVAL		// buffer size is 0.5s
@@ -369,8 +371,14 @@ int position_estimator_inav_thread_main(int argc, char *argv[])
 	memset(&mocap, 0, sizeof(mocap));
 	struct vehicle_global_position_s global_pos;
 	memset(&global_pos, 0, sizeof(global_pos));
+
 	struct distance_sensor_s lidar;
 	memset(&lidar, 0, sizeof(lidar));
+
+	struct rw_uart_sonar_data_s sonar;
+	memset(&lidar, 0, sizeof(sonar));
+
+
 	struct vehicle_rates_setpoint_s rates_setpoint;
 	memset(&rates_setpoint, 0, sizeof(rates_setpoint));
 
@@ -384,7 +392,12 @@ int position_estimator_inav_thread_main(int argc, char *argv[])
 	int vehicle_gps_position_sub = orb_subscribe(ORB_ID(vehicle_gps_position));
 	int vision_position_estimate_sub = orb_subscribe(ORB_ID(vision_position_estimate));
 	int att_pos_mocap_sub = orb_subscribe(ORB_ID(att_pos_mocap));
+
 	int distance_sensor_sub = orb_subscribe(ORB_ID(distance_sensor));
+
+	/* subscribe to rw_uart_sonar topic */
+   	 //int sonar_sub_fd = orb_subscribe(ORB_ID(rw_uart_sonar));
+   
 	int vehicle_rate_sp_sub = orb_subscribe(ORB_ID(vehicle_rates_setpoint));
 
 	/* advertise */
@@ -539,17 +552,33 @@ int position_estimator_inav_thread_main(int argc, char *argv[])
 				}
 			}
 
+    
+    
+    
+
+
 
 			/* lidar alt estimation */
 			orb_check(distance_sensor_sub, &updated);
+  			 // orb_check(sonar_sub_fd, &updated); 
 
 			/* update lidar separately, needed by terrain estimator */
 			if (updated) {
-				orb_copy(ORB_ID(distance_sensor), distance_sensor_sub, &lidar);
-				lidar.current_distance += params.lidar_calibration_offset;
+				 orb_copy(ORB_ID(distance_sensor), distance_sensor_sub, &lidar);
+				 lidar.current_distance += params.lidar_calibration_offset;
+				//orb_copy(ORB_ID(rw_uart_sonar), sonar_sub_fd, &sonar);
+
+
+				//lidar.current_distance = params.lidar_calibration_offset + static_cast<float>(sonar.data)/1000.0f;
+				//lidar.min_distance = 0.3;
+				//lidar.max_distance = 3.5;
+
+				//printf("[YCM]sonarhhdd.data=%5.3f\n",(double)lidar.current_distance);
+
 			}
 
 			if (updated) { //check if altitude estimation for lidar is enabled and new sensor data
+				//printf("[YCM]sonarhhhhhdd.data=%5.3f\n",(double)lidar.current_distance);
 
 				if (params.enable_lidar_alt_est && lidar.current_distance > lidar.min_distance && lidar.current_distance < lidar.max_distance
 			    		&& (PX4_R(att.R, 2, 2) > 0.7f)) {
@@ -571,6 +600,7 @@ int position_estimator_inav_thread_main(int argc, char *argv[])
 					}
 
 					corr_lidar = lidar_offset - dist_ground - z_est[0];
+					//printf("[ttt]sonarhhdd.data=%5.3f\n",(double)corr_lidar);
 
 					if (fabsf(corr_lidar) > params.lidar_err) { //check for spike
 						corr_lidar = 0;
@@ -598,6 +628,9 @@ int position_estimator_inav_thread_main(int argc, char *argv[])
 
 			if (updated && lidar_valid) {
 				orb_copy(ORB_ID(optical_flow), optical_flow_sub, &flow);
+
+
+				//printf("%d\n",flow.quality);
 
 				flow_time = t;
 				float flow_q = flow.quality / 255.0f;

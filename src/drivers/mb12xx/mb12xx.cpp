@@ -76,7 +76,7 @@
 
 /* Configuration Constants */
 #define MB12XX_BUS 		PX4_I2C_BUS_EXPANSION
-#define MB12XX_BASEADDR 	0x70 /* 7-bit address. 8-bit address is 0xE0 */
+#define MB12XX_BASEADDR 	0xe8 /* 7-bit address. 8-bit address is 0xE0 */
 #define MB12XX_DEVICE_PATH	"/dev/mb12xx"
 
 /* MB12xx Registers addresses */

@@ -124,7 +124,7 @@ bool Mavlink::_boot_complete = false;
 bool Mavlink::_config_link_on = false;
 
 Mavlink::Mavlink() :
-	_device_name("/dev/ttyS1"),
+	_device_name("/dev/ttyS3"),
 	_task_should_exit(false),
 	next(nullptr),
 	_instance_id(0),

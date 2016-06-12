@@ -77,6 +77,9 @@ set(config_module_list
 	modules/gpio_led
 	modules/uavcan
 	modules/land_detector
+	modules/rw_uart
+	modules/rw_uart_sonar
+
 
 	#
 	# Estimation modules (EKF/ SO3 / other filters)
