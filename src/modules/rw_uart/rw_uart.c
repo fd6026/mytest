@@ -270,7 +270,7 @@ usleep(10000000);
 
     report.pixel_flow_x_integral = (float)(my_dat_struct.pixel_flow_x_integral) / 10000.0f;//convert to radians
 
-    report.pixel_flow_y_integral = -(float)(my_dat_struct.pixel_flow_y_integral) / 10000.0f;//convert to radians
+    report.pixel_flow_y_integral = (float)(my_dat_struct.pixel_flow_y_integral) / 10000.0f;//convert to radians
 
     report.frame_count_since_last_readout = my_dat_struct.frame_count_since_last_readout;
 
