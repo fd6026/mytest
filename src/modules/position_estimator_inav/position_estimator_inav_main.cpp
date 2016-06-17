@@ -635,11 +635,17 @@ int position_estimator_inav_thread_main(int argc, char *argv[])
 				flow_time = t;
 				float flow_q = flow.quality / 255.0f;
 				float dist_bottom = lidar.current_distance;
-
+				//printf("!!!!!!!!!!!!!!!!!!!!!!!!k:%6.3f\n",(double)PX4_R(att.R, 2, 2));
 				if (dist_bottom > flow_min_dist && flow_q > params.flow_q_min && PX4_R(att.R, 2, 2) > 0.7f) {
 					/* distance to surface */
-					//float flow_dist = dist_bottom / PX4_R(att.R, 2, 2); //use this if using sonar
-					float flow_dist = dist_bottom; //use this if using lidar
+					float flow_dist = dist_bottom / PX4_R(att.R, 2, 2); //use this if using sonar
+					//float flow_dist = dist_bottom; //use this if using lidar
+
+					//printf("A:%6.3f\n",(double)dist_bottom);
+					//printf("----------------k:%6.3f\n",(double)PX4_R(att.R, 2, 2));
+					//printf("B:%6.3f\n",(double)flow_dist);
+
+
 
 					/* check if flow if too large for accurate measurements */
 					/* calculate estimated velocity in body frame */

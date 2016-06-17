@@ -103,7 +103,7 @@ int set_uart_baudrate(const int fd, unsigned int baud)
 
 int uart_init(const char * uart_name)
 {
-    int serial_fd = open(uart_name, O_RDWR | O_NOCTTY );
+    int serial_fd = open(uart_name, O_RDWR | O_NOCTTY | O_NONBLOCK );
 
     if (serial_fd < 0) {
         err(1, "failed to open port: %s", uart_name);
@@ -216,8 +216,8 @@ int rw_uart_thread_main(int argc, char *argv[])
  //   orb_advert_t _distance_sensor_topic = orb_advertise(ORB_ID(distance_sensor), &distance_report);
 
 
-usleep(10000000);
-usleep(10000000);
+//usleep(10000000);
+//usleep(10000000);
 
 
 
