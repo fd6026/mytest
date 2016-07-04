@@ -35,7 +35,7 @@ static int uart_init(const char * uart_name);
 static int set_uart_baudrate(const int fd, unsigned int baud);
 static void usage(const char *reason);
 
-#define PX4FLOW_MAX_DISTANCE 5.0f
+#define PX4FLOW_MAX_DISTANCE 7.65f
 #define PX4FLOW_MIN_DISTANCE 0.3f
 
 
@@ -214,21 +214,27 @@ int rw_uart_sonar_thread_main(int argc, char *argv[])
 
             while(1 == read(uart_read,&data,1))
             {
-                printf("-%d",data );
+                printf("-%d",data );                
+                printf("\n",data );
+
               if(data == 'R')
                 {
+                    printf("*",distanc );
 
                     read(uart_read,&data,1);
-                    distanc = data*100;
+                    //data = 0x7d - data;
+                    distanc = (data-'0')*100;
                     read(uart_read,&data,1);
-                    distanc += data*10
+                    //data = 0x7d - data;
+                    distanc += (data-'0')*10;
                     read(uart_read,&data,1);
-                    distanc +=data;
+                   // data = 0x7d - data;
+                    distanc +=data-'0';
                 } 
                 printf("%d\n",distanc );
-            }            
 
-    
+    distanc *= 10;  //unit convert;
+
     distance_report.timestamp = hrt_absolute_time();
     distance_report.min_distance = PX4FLOW_MIN_DISTANCE;
     distance_report.max_distance = PX4FLOW_MAX_DISTANCE;
@@ -237,14 +243,15 @@ int rw_uart_sonar_thread_main(int argc, char *argv[])
     distance_report.type = 1; //sonar type
     /* TODO: the ID needs to be properly set */
     distance_report.id = 0;
-    distance_report.orientation = 8;   
+    distance_report.orientation = 8; 
 
     orb_publish(ORB_ID(distance_sensor), _distance_sensor_topic, &distance_report);
-     usleep(40000);    
+
+            }          
+     
                 
-            }
-        
-       // printf("send_c =%d\n",receiver_c);hd debug
+        }        
+      
     warnx("[YCM]exiting");
     thread_running = false;
     close(uart_read);
