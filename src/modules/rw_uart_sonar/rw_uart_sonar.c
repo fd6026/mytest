@@ -207,31 +207,27 @@ int rw_uart_sonar_thread_main(int argc, char *argv[])
     while(!thread_should_exit)
         {  
            // printf("first:\n");
+            unsigned int distanc = 0;
 
-            usleep(10000);
-            data = 0x55;
-            // printf("secondsecond:\n");
-            
-            write(uart_read,&data,1);
-            //if(0 == (send_c--))break; hd debug
-           // printf("thirdthirdthird:\n");
-            usleep(30000);
-           // printf("fourthfourthfourthfourth:\n");
-            
-            data = 0;            
+             //distanc = dis_h*256 +dis_l;           
+            //usleep(10000);
 
-            unsigned char dis_h,dis_l;
-            read(uart_read,&data,1);
-                dis_h =data;
-            read(uart_read,&data,1);
-                dis_l =data;
+            while(1 == read(uart_read,&data,1))
+            {
+                printf("-%d",data );
+              if(data == 'R')
+                {
 
+                    read(uart_read,&data,1);
+                    distanc = data*100;
+                    read(uart_read,&data,1);
+                    distanc += data*10
+                    read(uart_read,&data,1);
+                    distanc +=data;
+                } 
+                printf("%d\n",distanc );
+            }            
 
-            unsigned int distanc;
-
-             distanc = dis_h*256 +dis_l;                   
-
-                /* publish to the distance_sensor topic as well */
     
     distance_report.timestamp = hrt_absolute_time();
     distance_report.min_distance = PX4FLOW_MIN_DISTANCE;
