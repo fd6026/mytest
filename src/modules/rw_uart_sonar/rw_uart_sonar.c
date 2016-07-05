@@ -214,12 +214,12 @@ int rw_uart_sonar_thread_main(int argc, char *argv[])
 
             while(1 == read(uart_read,&data,1))
             {
-                printf("-%d",data );                
-                printf("\n",data );
+               // printf("-%d",data );                
+               // printf("\n",data );
 
               if(data == 'R')
                 {
-                    printf("*",distanc );
+                 //   printf("*",distanc );
 
                     read(uart_read,&data,1);
                     //data = 0x7d - data;
@@ -230,10 +230,9 @@ int rw_uart_sonar_thread_main(int argc, char *argv[])
                     read(uart_read,&data,1);
                    // data = 0x7d - data;
                     distanc +=data-'0';
-                } 
-                printf("%d\n",distanc );
 
-    distanc *= 10;  //unit convert;
+// printf("%d\n",distanc );
+                      distanc *= 10;  //unit convert;
 
     distance_report.timestamp = hrt_absolute_time();
     distance_report.min_distance = PX4FLOW_MIN_DISTANCE;
@@ -246,6 +245,10 @@ int rw_uart_sonar_thread_main(int argc, char *argv[])
     distance_report.orientation = 8; 
 
     orb_publish(ORB_ID(distance_sensor), _distance_sensor_topic, &distance_report);
+                } 
+               
+
+  
 
             }          
      
